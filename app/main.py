@@ -1,6 +1,13 @@
 from fastapi import FastAPI
-from app.routers import test
+from app.routers import test, projects
 from fastapi.middleware.cors import CORSMiddleware
+
+
+app = FastAPI(
+    title="CIR Backend API",
+    description="Backend utilisé par Bubble.io pour le projet CIR",
+    version="0.1.0"
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -8,11 +15,6 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)
-app = FastAPI(
-    title="CIR Backend API",
-    description="Backend utilisé par Bubble.io pour le projet CIR",
-    version="0.1.0"
 )
 
 # On branche nos routes
