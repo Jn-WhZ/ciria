@@ -19,6 +19,7 @@ app.add_middleware(
 
 # On branche nos routes
 app.include_router(test.router)
+app.include_router(projects.router)
 
 @app.get("/")
 async def root():
