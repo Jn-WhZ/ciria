@@ -17,7 +17,7 @@ def create_prompt(entry: PromptEntry):
     # insertion dans Supabase
     response = supabase.table("prompts").insert({
         "prompt": entry.prompt,
-        "completion": entry.completion
+        "completion": entry.completion,
         "project_id" : entry.project_id
     }).execute()
     data=response.data
