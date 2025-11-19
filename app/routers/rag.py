@@ -45,3 +45,5 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
         source_id = source.data[0]["id"]
         threading.Thread(target=process_rag_background, args=(source_id, clean_text(text))).start()
         return {"status": "processing", "source_id": source_id}
+    except Exception as e :
+        return {"error:",str(e)}
