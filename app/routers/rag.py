@@ -33,7 +33,7 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
             supabase.table("chunks").insert({
                 "source_id": source_id,
                 "chunk_index": i,
-                "chunk_text": chunk,
+                "chunk_text": clean_text(chunk),
                 "vector": vector
             }).execute()
 
