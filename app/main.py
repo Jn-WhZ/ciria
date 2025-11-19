@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import test, projects, llm, prompts
+from app.routers import test, projects, llm, , rag
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -22,6 +22,7 @@ app.include_router(test.router)
 app.include_router(projects.router)
 app.include_router(llm.router)
 app.include_router(prompts.router)
+app.include_router(rag.router)
 
 @app.get("/")
 async def root():
