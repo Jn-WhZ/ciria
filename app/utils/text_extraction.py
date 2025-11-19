@@ -1,11 +1,6 @@
 from pypdf import PdfReader
 from docx import Document
-
-def clean_text(text):
-    if not text:
-        return ""
-    # Remove NULL chars that break Postgres
-    return text.replace("\x00", "")
+from app.utils.cleaning import clean_text
 
 def extract_text_from_pdf(upload_file):
     reader = PdfReader(upload_file.file)
