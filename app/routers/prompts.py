@@ -19,14 +19,12 @@ def create_prompt(entry: PromptEntry):
         "prompt": entry.prompt,
         "completion": entry.completion
     }).execute()
+    data=response.data
 
-    if response.error:
-        raise HTTPException(status_code=400, detail=response.error.message)
+    if data is None:
+        return []
+    return data
 
-    return {
-        "status": "success",
-        "data": response.data[0]
-    }
 
 @router.get("/")
 def list_prompts():
@@ -35,6 +33,4 @@ def list_prompts():
 
     if data is None:
         return []
-
-
     return data
