@@ -27,8 +27,8 @@ def create_prompt(entry: PromptEntry):
     return data
 
 
-@router.get("/")
-def list_prompts():
+@router.get("/{project_id}")
+def list_prompts(project_id: str):
     response = (
         supabase.table("prompts")
         .select("*")
