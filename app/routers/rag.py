@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.config.supabase import supabase
-from app.utils.text_extraction import extract_text
+from app.utils.text_extraction import extract_text, clean_text
 from app.utils.chunking import split_into_chunks
 from app.utils.embeddings import embed_text
 from app.config.rag import client
