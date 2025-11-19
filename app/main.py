@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import test, projects, llm, , rag
+from app.routers import test, projects, llm, rag
 from fastapi.middleware.cors import CORSMiddleware
 
 
