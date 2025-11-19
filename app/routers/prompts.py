@@ -31,8 +31,10 @@ def create_prompt(entry: PromptEntry):
 @router.get("/")
 def list_prompts():
     response = supabase.table("prompts").select("*").order("created_at", desc=True).execute()
+    data=response.data
 
-    if response.error:
-        raise HTTPException(status_code=400, detail=response.error.message)
+    if data is None:
+        return []
 
-    return response.data
+
+    return data
