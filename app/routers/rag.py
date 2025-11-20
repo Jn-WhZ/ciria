@@ -150,7 +150,7 @@ def list_sources(project_id):
     try:
         response = supabase.table("sources") \
             .select("filename, created_at, file_type, status") \
-            .contains("project_id", [int(project_id)]) \
+            .contains("project_id", [project_id]) \
             .order("created_at", desc=True) \
             .execute()
 
