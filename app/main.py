@@ -25,5 +25,5 @@ app.include_router(prompts.router)
 app.include_router(rag.router)
 
 @app.get("/")
-async def root():
-    return {"message": "API FastAPI opérationnelle !"}
+def read_root():
+    return {"status": "ok", "service": "ciria-api"}
