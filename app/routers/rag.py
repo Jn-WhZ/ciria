@@ -131,14 +131,14 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
         # 3. START BACKGROUND THREAD
         threading.Thread(
             target=process_full_rag_pipeline,
-            args=(source_id, file_path, filename)
+            args=(source_id, file_path, sanitize_filename)
         ).start()
 
         # 4. RETURN IMMEDIATE RESPONSE
         return {
             "status": "processing",
             "source_id": source_id,
-            "filename": filename
+            "filename": sanitize_filename
         }
 
     except Exception as e:
