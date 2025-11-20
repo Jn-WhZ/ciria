@@ -23,3 +23,10 @@ def extract_text(upload_file):
         return extract_text_from_docx(upload_file)
 
     return clean_text(extract_text_from_plain(upload_file))
+
+
+def extract_text_from_bytes(raw_bytes, filename):
+    from io import BytesIO
+    fake_upload = BytesIO(raw_bytes)
+    fake_upload.filename = filename
+    return extract_text(fake_upload)
