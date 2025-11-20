@@ -27,3 +27,8 @@ app.include_router(rag.router)
 @app.get("/")
 def read_root():
     return {"status": "ok", "service": "ciria-api"}
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
