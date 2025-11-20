@@ -114,7 +114,7 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
         # 2. INSERT SOURCE RECORD
         try:
             source = supabase.table("sources").insert({
-                "project_id": project_id,
+                "project_id": [int(project_id)],
                 "filename": sanitize_filename,
                 "original_text": "",  # filled later
                 "file_type":str(file.content_type),
@@ -150,7 +150,7 @@ def list_sources(project_id: str):
     try:
         response = supabase.table("sources") \
             .select("filename, created_at, file_type, status") \
-            .eq("project_id", project_id) \
+            .contains("project_id", [int(project_id)]) \
             .order("created_at", desc=True) \
             .execute()
 
