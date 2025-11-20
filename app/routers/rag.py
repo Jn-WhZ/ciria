@@ -115,7 +115,7 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
         try:
             source = supabase.table("sources").insert({
                 "project_id": [int(project_id)],
-                "filename": sanitize_filename,
+                "filename": sanitized_filename,
                 "original_text": "",  # filled later
                 "file_type":str(file.content_type),
                 "status":"analyse"
@@ -131,14 +131,14 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
         # 3. START BACKGROUND THREAD
         threading.Thread(
             target=process_full_rag_pipeline,
-            args=(source_id, file_path, sanitize_filename)
+            args=(source_id, file_path, sanitized_filename)
         ).start()
 
         # 4. RETURN IMMEDIATE RESPONSE
         return {
             "status": "processing",
             "source_id": source_id,
-            "filename": sanitize_filename
+            "filename": sanitized_filename
         }
 
     except Exception as e:
