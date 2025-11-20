@@ -96,7 +96,7 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
 
         # 1. TRY UPLOAD TO STORAGE (WITH UPSERT)
         try:
-            supabase.storage.from_("RAG_uploads").upload(
+            supabase.storage.from_("rag_uploads").upload(
                 file_path,
                 file_bytes,
                 {
