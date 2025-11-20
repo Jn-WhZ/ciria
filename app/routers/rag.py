@@ -5,6 +5,8 @@ from app.utils.text_extraction import extract_text_from_bytes
 from app.utils.cleaning import clean_text
 from app.utils.chunking import split_into_chunks
 from app.utils.embeddings import embed_text
+from app.utils.file_naming import sanitize_filename
+
 
 router = APIRouter(prefix="/api/rag", tags=["RAG"])
 
@@ -88,12 +90,13 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
     try:
         # Read file bytes
         file_bytes = await file.read()
-        filename = file.filename
-        file_path = f"{project_id}/{filename}"
+        sanitized_filename = sanitize_filename(file.filename)
+        file_path = f"{project_id}/{sanitized_filename}"
+
 
         # 1. TRY UPLOAD TO STORAGE (WITH UPSERT)
         try:
-            supabase.storage.from_("rag_uploads").upload(
+            supabase.storage.from_("RAG_uploads").upload(
                 file_path,
                 file_bytes,
                 {
@@ -112,7 +115,7 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
         try:
             source = supabase.table("sources").insert({
                 "project_id": project_id,
-                "filename": filename,
+                "filename": sanitize_filename,
                 "original_text": "",  # filled later
                 "file_type":str(file.content_type),
                 "status":"analyse"
