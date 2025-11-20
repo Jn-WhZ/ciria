@@ -143,3 +143,25 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
 
     except Exception as e:
         raise HTTPException(500, f"Unexpected error: {str(e)}")
+
+
+@router.get("/sources/{project_id}")
+def list_sources(project_id: str):
+    try:
+        response = supabase.table("sources") \
+            .select("filename, created_at, file_type, status") \
+            .eq("project_id", project_id) \
+            .order("created_at", desc=True) \
+            .execute()
+
+        return {
+            "project_id": project_id,
+            "count": len(response.data),
+            "sources": response.data
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Failed to fetch sources: {str(e)}"
+        }
