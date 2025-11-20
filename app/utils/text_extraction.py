@@ -1,32 +1,52 @@
-from pypdf import PdfReader
-from docx import Document
-from app.utils.cleaning import clean_text
+import io
+from PyPDF2 import PdfReader
+import docx
+import mimetypes
 
-def extract_text_from_pdf(upload_file):
-    reader = PdfReader(upload_file.file)
-    return "\n".join([p.extract_text() or "" for p in reader.pages])
+def extract_text_from_bytes(file_bytes: bytes, filename: str) -> str:
+    """
+    Extract text from raw bytes downloaded from Supabase.
+    """
 
-def extract_text_from_docx(upload_file):
-    document = Document(upload_file.file)
-    return "\n".join([p.text for p in document.paragraphs])
+    # Convert to BytesIO
+    stream = io.BytesIO(file_bytes)
 
-def extract_text_from_plain(upload_file):
-    return upload_file.file.read().decode("utf-8")
+    # Detect file type from extension
+    ext = filename.lower().split(".")[-1]
 
-def extract_text(upload_file):
-    filename = upload_file.filename.lower()
+    # -------------------------------
+    # PDF
+    # -------------------------------
+    if ext == "pdf":
+        try:
+            reader = PdfReader(stream)
+            text = ""
+            for page in reader.pages:
+                text += page.extract_text() or ""
+            return text
+        except Exception as e:
+            raise Exception(f"PDF extraction failed: {str(e)}")
 
-    if filename.endswith(".pdf"):
-        return extract_text_from_pdf(upload_file)
+    # -------------------------------
+    # DOCX
+    # -------------------------------
+    if ext == "docx":
+        try:
+            doc = docx.Document(stream)
+            return "\n".join([p.text for p in doc.paragraphs])
+        except Exception as e:
+            raise Exception(f"DOCX extraction failed: {str(e)}")
 
-    if filename.endswith(".docx"):
-        return extract_text_from_docx(upload_file)
+    # -------------------------------
+    # TXT
+    # -------------------------------
+    if ext in ["txt", "md"]:
+        try:
+            return stream.read().decode("utf-8", errors="ignore")
+        except Exception:
+            return stream.read().decode("latin-1", errors="ignore")
 
-    return clean_text(extract_text_from_plain(upload_file))
-
-
-def extract_text_from_bytes(raw_bytes, filename):
-    from io import BytesIO
-    fake_upload = BytesIO(raw_bytes)
-    fake_upload.filename = filename
-    return extract_text(fake_upload)
+    # -------------------------------
+    # Unsupported type
+    # -------------------------------
+    raise Exception(f"Unsupported file type: {ext}")
