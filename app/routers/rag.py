@@ -146,7 +146,7 @@ async def upload_document(project_id: str, file: UploadFile = File(...)):
 
 
 @router.get("/sources/{project_id}")
-def list_sources(project_id: str):
+def list_sources(project_id):
     try:
         response = supabase.table("sources") \
             .select("filename, created_at, file_type, status") \
