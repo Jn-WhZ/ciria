@@ -1,4 +1,5 @@
 import threading
+from pydantic import BaseModel
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.config.supabase import supabase
 from app.utils.text_extraction import extract_text_from_bytes
@@ -6,6 +7,9 @@ from app.utils.cleaning import clean_text
 from app.utils.chunking import split_into_chunks
 from app.utils.embeddings import embed_text
 from app.utils.file_naming import sanitize_filename
+from app.utils.rag_retrieve import retrieve_relevant_chunks
+from app.utils.rag_prompt_builder import build_rag_prompt
+from app.config.llm import client
 
 
 router = APIRouter(prefix="/api/rag", tags=["RAG"])
@@ -165,3 +169,41 @@ def list_sources(project_id):
             "status": "error",
             "message": f"Failed to fetch sources: {str(e)}"
         }
+
+
+
+
+class QueryRequest(BaseModel):
+    project_id: int
+    question: str
+
+
+@router.post("/query")
+def rag_query(request: QueryRequest):
+
+    # 1. Retrieve context chunks
+    chunks = retrieve_relevant_chunks(request.project_id, request.question, top_k=5)
+
+    if not chunks:
+        return {
+            "answer": "Aucun contenu pertinent n'a été trouvé dans les documents du projet.",
+            "sources": []
+        }
+
+    # 2. Build final prompt
+    prompt = build_rag_prompt(request.question, chunks)
+
+    # 3. Call OpenAI
+    response = client.responses.create(
+        model="gpt-4.1-mini",
+        input=prompt
+    )
+
+    answer = response.output_text
+
+    # 4. Return answer + filenames
+    return {
+        "question": request.question,
+        "answer": answer,
+        "sources_used": list({c["filename"] for c in chunks})
+    }
