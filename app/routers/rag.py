@@ -72,10 +72,10 @@ def process_full_rag_pipeline(source_id: str, file_path: str, filename: str):
                 print(f"⚠️ Chunk {idx} skipped:", str(e))
                 continue
         supabase.table("sources").update({"status": "indexed"}).eq("id", source_id).execute()
-        print(f"✅ RAG ingestion complete for source {source_id}")
+        print(f"✅ RAG ingestion complete for source {source_id}", flush=True)
 
     except Exception as unexpected:
-        print("🔥 Unexpected error in background task:", str(unexpected))
+        print("🔥 Unexpected error in background task:", str(unexpected), flush=True)
         supabase.table("sources").update({
             "original_text": f"ERROR: unexpected failure: {str(unexpected)}",
             "status":"error"
